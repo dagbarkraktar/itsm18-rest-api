@@ -94,9 +94,11 @@ ENV/
 # Rope project settings
 .ropeproject
 
-# PyCharm stuff
+# PyCharm staff
 .idea
 
-# additional log staff
+# VSCode staff
+.vscode
 
+# additional log staff
 *.log.*
