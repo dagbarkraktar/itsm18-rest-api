@@ -46,34 +46,27 @@ class NagiosAggregator(Resource):
 
         if host_id > MAX_SERVER_ID:
             return {"message": "Unknown server id!"}, 404
-        else:
-            response = {}
-            storage_data = []
-            services_data = []
 
-            hdd1 = get_nagios_service_data(host_id, HDD_DISK_C)
-            storage_data.append(hdd1)
+        response = {}
+        storage_data = []
+        services_data = []
 
-            hdd2 = get_nagios_service_data(host_id, HDD_DISK_D)
-            storage_data.append(hdd2)
+        # Get monitoring data
+        # storage
+        storage_data.append(get_nagios_service_data(host_id, HDD_DISK_C))
+        storage_data.append(get_nagios_service_data(host_id, HDD_DISK_D))
+        storage_data.append(get_nagios_service_data(host_id, HDD_DISK_E))
+        # ping, memory usage, CPU load, uptime
+        services_data.append(get_nagios_service_data(host_id, SRV_PING))
+        services_data.append(get_nagios_service_data(host_id, SRV_MEM_USAGE))
+        services_data.append(get_nagios_service_data(host_id, SRV_CPU_LOAD))
+        services_data.append(get_nagios_service_data(host_id, SRV_UPTIME))
 
-            hdd3 = get_nagios_service_data(host_id, HDD_DISK_E)
-            storage_data.append(hdd3)
+        response["server_name"] = hosts[host_id]
+        response["storage"] = storage_data
+        response["services"] = services_data
 
-            ping = get_nagios_service_data(host_id, SRV_PING)
-            services_data.append(ping)
-
-            mem_usage = get_nagios_service_data(host_id, SRV_MEM_USAGE)
-            services_data.append(mem_usage)
-
-            services_data.append(get_nagios_service_data(host_id, SRV_CPU_LOAD))
-            services_data.append(get_nagios_service_data(host_id, SRV_UPTIME))
-
-            response["server_name"] = hosts[host_id]
-            response["storage"] = storage_data
-            response["services"] = services_data
-
-            return jsonify(response)
+        return jsonify(response)
 
 
 def get_nagios_service_data(host_id, service_id):
